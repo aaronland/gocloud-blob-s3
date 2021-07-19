@@ -42,7 +42,7 @@ func SetWriterOptionsWithContext(ctx context.Context, ctx_key interface{}, opt_k
 
 		wr_opts.BufferSize = opt_value.(int)
 
-	case "CacheControl", "ContentDisposition", "ContentEncoding":
+	case "CacheControl", "ContentDisposition", "ContentEncoding", "ContentType", "ContentLanguage":
 
 		switch opt_value.(type) {
 		case string:
@@ -58,6 +58,10 @@ func SetWriterOptionsWithContext(ctx context.Context, ctx_key interface{}, opt_k
 			wr_opts.ContentDisposition = opt_value.(string)
 		case "ContentEncoding":
 			wr_opts.ContentEncoding = opt_value.(string)
+		case "ContentType":
+			wr_opts.ContentType = opt_value.(string)
+		case "ContentLanguage":
+			wr_opts.ContentLanguage = opt_value.(string)
 		}
 
 	case "ContentMD5":
@@ -120,9 +124,27 @@ func SetWriterOptionsWithContext(ctx context.Context, ctx_key interface{}, opt_k
 		wr_opts.BeforeWrite = before
 
 	default:
-		return nil, fmt.Errorf("Invalid or unsupport key '%s'", opt_key)
+		return nil, fmt.Errorf("Invalid or unsupported key '%s'", opt_key)
 	}
 
 	ctx = context.WithValue(ctx, ctx_key, wr_opts)
+	return ctx, nil
+}
+
+// SetWriterOptionsWithContextAndMap is a convenience method for invoking SetWriterOptionsWithContext
+// multiple times.
+func SetWriterOptionsWithContextAndMap(ctx context.Context, ctx_key interface{}, opts map[string]interface{}) (context.Context, error) {
+
+	var err error
+
+	for k, v := range opts {
+
+		ctx, err = SetWriterOptionsWithContext(ctx, ctx_key, k, v)
+
+		if err != nil {
+			return nil, fmt.Errorf("Failed to set writer options for '%s', %v", k, v)
+		}
+	}
+
 	return ctx, nil
 }
