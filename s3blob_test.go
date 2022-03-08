@@ -3,7 +3,6 @@ package s3blob
 import (
 	"context"
 	"flag"
-	_ "github.com/aaronland/go-cloud-s3blob"
 	"gocloud.dev/blob"
 	"io"
 	"testing"
