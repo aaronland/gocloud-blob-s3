@@ -3,9 +3,10 @@ package s3blob
 import (
 	"context"
 	"flag"
-	"gocloud.dev/blob"
 	"io"
 	"testing"
+
+	"gocloud.dev/blob"
 )
 
 var uri = flag.String("uri", "", "A valid s3blob:// URI.")

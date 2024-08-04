@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"gocloud.dev/blob"
 )
 
@@ -111,7 +111,7 @@ func SetWriterOptionsWithContext(ctx context.Context, ctx_key interface{}, opt_k
 
 		before := func(asFunc func(interface{}) bool) error {
 
-			req := &s3manager.UploadInput{}
+			req := &s3.UploadInput{}
 			ok := asFunc(&req)
 
 			if !ok {

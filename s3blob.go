@@ -8,8 +8,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/aaronland/go-aws-session"
-	aws_session "github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aaronland/go-aws-auth"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"gocloud.dev/blob"
 	gc_s3blob "gocloud.dev/blob/s3blob"
 )
@@ -21,7 +22,7 @@ func init() {
 }
 
 type URLOpener struct {
-	Session *aws_session.Session
+	Config *aws.Config
 }
 
 type lazySessionOpener struct {
@@ -34,23 +35,32 @@ func (o *lazySessionOpener) OpenBucketURL(ctx context.Context, u *url.URL) (*blo
 
 	o.init.Do(func() {
 
-		query := u.Query()
+		/*
+			query := u.Query()
 
-		dsn := make([]string, 0)
+			dsn := make([]string, 0)
 
-		for k, v := range query {
+			for k, v := range query {
 
-			if len(v) != 1 {
-				o.err = errors.New("Invalid DSN value")
-				return
+				if len(v) != 1 {
+					o.err = errors.New("Invalid DSN value")
+					return
+				}
+
+				dsn = append(dsn, fmt.Sprintf("%s=%s", k, v[0]))
 			}
 
-			dsn = append(dsn, fmt.Sprintf("%s=%s", k, v[0]))
-		}
+			str_dsn := strings.Join(dsn, " ")
 
-		str_dsn := strings.Join(dsn, " ")
+			sess, err := session.NewSessionWithDSN(str_dsn)
 
-		sess, err := session.NewSessionWithDSN(str_dsn)
+			if err != nil {
+				o.err = err
+				return
+			}
+		*/
+
+		cfg, err := auth.NewConfig(ctx, uri.String())
 
 		if err != nil {
 			o.err = err
@@ -58,7 +68,7 @@ func (o *lazySessionOpener) OpenBucketURL(ctx context.Context, u *url.URL) (*blo
 		}
 
 		o.opener = &URLOpener{
-			Session: sess,
+			Config: cfg,
 		}
 	})
 
@@ -70,5 +80,6 @@ func (o *lazySessionOpener) OpenBucketURL(ctx context.Context, u *url.URL) (*blo
 }
 
 func (o *URLOpener) OpenBucketURL(ctx context.Context, u *url.URL) (*blob.Bucket, error) {
-	return gc_s3blob.OpenBucket(ctx, o.Session, u.Host, nil)
+	s3_client := s3.NewFromConfig(o.Config)
+	return gc_s3blob.OpenBucket(ctx, s3_client, u.Host, nil)
 }
