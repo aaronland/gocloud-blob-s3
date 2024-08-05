@@ -16,6 +16,8 @@ func SetACLWriterOptionsWithContext(ctx context.Context, key interface{}, acl st
 	return ctx
 }
 
+// StringACLToObjectCannedACL resolves a subset of the string values for S3 ACLs (those specific to objects) to
+// their corresponding `github.com/aws/aws-sdk-go-v2/service/s3/types.ObjectCannedACL` instance.
 func StringACLToObjectCannedACL(str_acl string) (types.ObjectCannedACL, error) {
 
 	switch str_acl {
