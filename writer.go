@@ -12,16 +12,21 @@ import (
 // NewWriterWithACL returns a new `blob.Writer` instance that has been configured with the relevant
 // `blob.WriterOptions` to ensure that files written to S3 will be done using AWS ACL permissions
 // defined in 'acl'.
-func NewWriterWithACL(ctx context.Context, bucket *blob.Bucket, path string, acl string) (*blob.Writer, error) {
+func NewWriterWithACL(ctx context.Context, bucket *blob.Bucket, path string, str_acl string) (*blob.Writer, error) {
+
+	acl, err := StringACLToObjectCannedACL(str_acl)
+
+	if err != nil {
+		return nil, fmt.Errorf("Failed to derive canned ACL from string, %w", err)
+	}
 
 	before := func(asFunc func(interface{}) bool) error {
 
-		req := &s3.UploadPartInput{}
+		req := &s3.PutObjectInput{}
 		ok := asFunc(&req)
 
 		if ok {
-			// FIX ME
-			// req.ACL = aws.String(acl)
+			req.ACL = acl
 		}
 
 		return nil

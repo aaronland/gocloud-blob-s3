@@ -2,6 +2,9 @@ package s3blob
 
 import (
 	"context"
+	"fmt"
+
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 // SetACLWriterOptionsWithContext return a new context.Context instance with a gocloud.dev/blob.WriterOptions
@@ -11,4 +14,21 @@ import (
 func SetACLWriterOptionsWithContext(ctx context.Context, key interface{}, acl string) context.Context {
 	ctx, _ = SetWriterOptionsWithContext(ctx, key, "ACL", acl)
 	return ctx
+}
+
+func StringACLToObjectCannedACL(str_acl string) (types.ObjectCannedACL, error) {
+
+	switch str_acl {
+	case "private":
+		return types.ObjectCannedACLPrivate, nil
+	case "public-read":
+		return types.ObjectCannedACLPublicRead, nil
+	case "public-read-write":
+		return types.ObjectCannedACLPublicReadWrite, nil
+	case "authenticated-read":
+		return types.ObjectCannedACLAuthenticatedRead, nil
+	default:
+		return "", fmt.Errorf("Invalid or unsupported ACL")
+	}
+
 }
