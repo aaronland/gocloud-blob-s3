@@ -3,9 +3,10 @@ package s3blob
 import (
 	"context"
 	"flag"
-	"gocloud.dev/blob"
 	"io"
 	"testing"
+
+	"gocloud.dev/blob"
 )
 
 var uri = flag.String("uri", "", "A valid s3blob:// URI.")
@@ -13,6 +14,11 @@ var uri = flag.String("uri", "", "A valid s3blob:// URI.")
 func TestOpenBucket(t *testing.T) {
 
 	ctx := context.Background()
+
+	if *uri == "" {
+		t.Log("Empty -uri flag. Skipping.")
+		t.Skip()
+	}
 
 	bucket, err := blob.OpenBucket(ctx, *uri)
 
