@@ -4,7 +4,15 @@ This is thing wrapper around the default `go-cloud` S3 blob opener to check for 
 
 ## Important
 
-This package might still be moved in to the [aaronland/go-cloud](https://github.com/aaronland/gocloud-blob) package. TBD...
+This package is DEPRECATED and the relevant functionality has been moved in to the [aaronland/go-cloud](https://github.com/aaronland/gocloud-blob) package.
+
+To use the `s3blob://` bucket implementation import it as:
+
+```
+import (
+       _ "github.com/aaronland/gocloud-blob/s3"
+)
+```
 
 ## Example
 
