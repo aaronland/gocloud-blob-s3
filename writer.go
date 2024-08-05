@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
+	// "github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"gocloud.dev/blob"
 )
@@ -16,11 +16,12 @@ func NewWriterWithACL(ctx context.Context, bucket *blob.Bucket, path string, acl
 
 	before := func(asFunc func(interface{}) bool) error {
 
-		req := &s3.UploadInput{}
+		req := &s3.UploadPartInput{}
 		ok := asFunc(&req)
 
 		if ok {
-			req.ACL = aws.String(acl)
+			// FIX ME
+			// req.ACL = aws.String(acl)
 		}
 
 		return nil

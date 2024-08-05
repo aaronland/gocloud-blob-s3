@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
+	// "github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"gocloud.dev/blob"
 )
@@ -109,16 +109,20 @@ func SetWriterOptionsWithContext(ctx context.Context, ctx_key interface{}, opt_k
 
 		acl := opt_value.(string)
 
+		// FIX ME
+		fmt.Println(acl)
+
 		before := func(asFunc func(interface{}) bool) error {
 
-			req := &s3.UploadInput{}
+			req := &s3.UploadPartInput{}
 			ok := asFunc(&req)
 
 			if !ok {
 				return fmt.Errorf("invalid s3 type")
 			}
 
-			req.ACL = aws.String(acl)
+			// FIX ME
+			// req.ACL = aws.String(acl)
 			return nil
 		}
 
