@@ -15,6 +15,11 @@ func TestOpenBucket(t *testing.T) {
 
 	ctx := context.Background()
 
+	if *uri == "" {
+		t.Log("Empty -uri flag. Skipping.")
+		t.Skip()
+	}
+
 	bucket, err := blob.OpenBucket(ctx, *uri)
 
 	if err != nil {
